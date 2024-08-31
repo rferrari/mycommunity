@@ -1,11 +1,33 @@
-'use client'
-import React from 'react';
-import { Box, HStack, Button, Textarea } from '@chakra-ui/react';
-import { useAioha } from '@aioha/react-ui'
-import { useRef } from 'react';
+import React, { useState, useRef } from 'react';
+import { Box, Textarea, HStack, Button, Image, IconButton, Wrap, Spinner, Progress } from '@chakra-ui/react';
 
-export default function TweetComposer() {
-    const { aioha, user, provider } = useAioha()
+import { getFileSignature, uploadImage } from '@/lib/hive/client-functions';
+import { Comment } from '@hiveio/dhive';
+import { useAioha } from '@aioha/react-ui';
+
+import GiphySelector from '../commons/GiphySelector';
+import ImageUploader from '../commons/ImageUploader';
+import { IGif } from '@giphy/js-types';
+import { CloseIcon } from '@chakra-ui/icons';
+import { FaImage } from 'react-icons/fa';
+import { MdGif } from 'react-icons/md';
+
+const parent_author_default = process.env.NEXT_PUBLIC_THREAD_AUTHOR || "skatedev";
+const parent_permlink_default = process.env.NEXT_PUBLIC_THREAD_PERMLINK || "re-skatedev-sidr6t";
+
+interface TweetComposerProps {
+    pa?: string;    //parent_author_default;
+    pp?: string;    //parent_permlink_default;
+    //onNewComment: (newComment: Partial<Comment>) => void;
+}
+
+export default function TweetComposer({pa, pp}: TweetComposerProps) {
+    const [conversation, setConversation] = useState<Comment | undefined>();
+    const [reply, setReply] = useState<Comment>();
+    const [isOpen, setIsOpen] = useState(false);
+    const [newComment, setNewComment] = useState<Comment | null>(null); // Define the state
+
+    const { user, aioha } = useAioha();
     const postBodyRef = useRef<HTMLTextAreaElement>(null);
     const [images, setImages] = useState<File[]>([]);
     const [selectedGif, setSelectedGif] = useState<IGif | null>(null);
@@ -13,9 +35,20 @@ export default function TweetComposer() {
     const [isLoading, setIsLoading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<number[]>([]);
 
+    // moved here inside default function
+    const handleNewComment = (newComment: Partial<Comment> | CharacterData) => {
+        setNewComment(newComment as Comment); // Type assertion
+      };
+
     async function handleComment() {
-        //  console.log(process.env.NEXT_PUBLIC_THREAD_AUTHOR)
-        //  console.log(aioha.getCurrentUser())
+        setIsLoading(true);
+        setUploadProgress([]);
+
+        if (!pa || !pp) {
+            pa = parent_author_default;
+            pp = parent_permlink_default;
+        }
+
         const permlink = new Date()
             .toISOString()
             .replace(/[^a-zA-Z0-9]/g, "")
@@ -48,16 +81,36 @@ export default function TweetComposer() {
         }
 
         if (commentBody) {
-            const comment = await aioha.comment(
-                String(process.env.NEXT_PUBLIC_THREAD_AUTHOR), 
-                String(process.env.NEXT_PUBLIC_THREAD_PERMLINK),
-                permlink, '', 
-                commentBody, 
-                { 
-                    app: String(process.env.NEXT_PUBLIC_COMMUNITY_APP || "MyCommunity")
-                    +'/'+String(process.env.NEXT_PUBLIC_COMMUNITY_VERSION || "0.0.1") 
-                })
-            console.log(comment)
+            try {
+                const commentResponse = await aioha.comment(
+                    pa, 
+                    pp, 
+                    permlink, '', 
+                    commentBody, 
+                    { app: 'mycommunity' });
+
+                if (commentResponse.success) {
+                    postBodyRef.current!.value = '';
+                    setImages([]);
+                    setSelectedGif(null);
+
+                    const newComment: Partial<Comment> = {
+                        author: user, // Assuming `pa` is the current user's author name
+                        permlink: permlink,
+                        body: commentBody,
+                    };
+
+                    //not sure, trying to import tweetercomposer methods to here
+                    //
+                    // ATENTION
+                    //
+                    handleNewComment(newComment); // Pass the actual Comment data
+                    //onNewComment(newComment); // Pass the actual Comment data
+                }
+            } finally {
+                setIsLoading(false);
+                setUploadProgress([]);
+            }
         }
     }
 
@@ -77,7 +130,7 @@ export default function TweetComposer() {
                 <HStack>
                     <Button _hover={{ borderColor: 'border', border: '1px solid' }} _active={{ borderColor: 'border' }} as="label" variant="ghost" isDisabled={isLoading}>
                         <FaImage size={22} />
-                        <ImageUploader images={images} onUpload={setImages} onRemove={(index) => setImages(prevImages => prevImages.filter((_, i) => i !== index))} />
+                        <ImageUploader images={images} onUpload={setImages} onRemove={(index: number) => setImages(prevImages => prevImages.filter((_, i) => i !== index))} />
                     </Button>
                     <Button _hover={{ borderColor: 'border', border: '1px solid' }} _active={{ borderColor: 'border' }} variant="ghost" onClick={() => setGiphyModalOpen(!isGiphyModalOpen)} isDisabled={isLoading}>
                         <MdGif size={48} />
@@ -123,7 +176,7 @@ export default function TweetComposer() {
             {isGiphyModalOpen && (
                 <GiphySelector
                     apiKey={process.env.GIPHY_API_KEY || 'qXGQXTPKyNJByTFZpW7Kb0tEFeB90faV'}
-                    onSelect={(gif, e) => {
+                    onSelect={(gif: React.SetStateAction<IGif | null>, e: { preventDefault: () => void; }) => {
                         e.preventDefault();
                         setSelectedGif(gif);
                         setGiphyModalOpen(false);
@@ -133,5 +186,3 @@ export default function TweetComposer() {
         </Box>
     );
 };
-
-export default TweetComposer; 

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Box, VStack, Button } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
+
 export default function Sidebar() {
     const router = useRouter();
     const isBusiness = process.env.NEXT_PUBLIC_SITE_TYPE === 'business';

@@ -1,19 +1,13 @@
 // app/layout.tsx
 'use client'
+import { Providers } from './providers';
 import { Box, Flex } from '@chakra-ui/react';
-<<<<<<< HEAD
-import Header from './components/commons/Header';
-import Sidebar from './components/commons/Sidebar';
-import FooterNavigation from './components/commons/FooterNavigation';
-//import LoginModal from './components/modal/LoginModal';
-=======
+
 import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
 import FooterNavigation from './components/layout/FooterNavigation';
-import LoginModal from './components/modal/LoginModal';
->>>>>>> main
-import { useState } from 'react';
-import { Providers } from './providers';
+
+//import LoginModal from './components/modal/LoginModal';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 
@@ -30,10 +24,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Box>
             </Flex>
             <FooterNavigation />
-<<<<<<< HEAD
-            {/* <LoginModal isOpen={isOpen} onClose={onClose} /> */}
-=======
->>>>>>> main
           </Box>
         </Providers>
       </body>

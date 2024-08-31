@@ -1,8 +1,9 @@
+/*
 import { Box, Text, HStack, Button, Avatar, Divider, VStack, Spinner } from '@chakra-ui/react';
 import { Comment } from '@hiveio/dhive';
-import { useComments } from '@/hooks/useComments';
+//import { useComments } from '@/hooks/useComments';
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import Tweet from './Tweet';
+//import Tweet from './Tweet';
 
 interface ConversationProps {
     comment: Comment;
@@ -12,8 +13,8 @@ interface ConversationProps {
 }
 
 const Conversation = ({ comment, setConversation, onOpen, setReply }: ConversationProps) => {
-    const { comments, isLoading, error } = useComments(comment.author, comment.permlink, true);
-    const replies = comments
+    //const { comments, isLoading, error } = useComments(comment.author, comment.permlink, true);
+    //const replies = comments
 
     function handleReplyModal() {
         setReply(comment);
@@ -24,14 +25,14 @@ const Conversation = ({ comment, setConversation, onOpen, setReply }: Conversati
         setConversation(undefined)
     }
 
-    if (isLoading) {
+    //if (isLoading) {
         return (
             <Box textAlign="center" mt={4}>
                 <Spinner size="xl" />
                 <Text>Loading tweets...</Text>
             </Box>
         );
-    }
+    // }
 
     return (
         <Box bg="muted" p={4} mt={1} mb={1} borderRadius="md">
@@ -61,3 +62,5 @@ const Conversation = ({ comment, setConversation, onOpen, setReply }: Conversati
 }
 
 export default Conversation;
+
+*/

@@ -6,16 +6,17 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
-//import DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify';
 //import { useComments } from '@/hooks/useComments';
 
 import { FaHeart, FaMoneyBill, FaRegComment, FaRegHeart, FaShare } from "react-icons/fa";
 
 const Tweet = ({ comment }: { comment: Comment }) => {
     // Sanitize the comment body to remove any invalid HTML tags or attributes
-    //const sanitizedBody = DOMPurify.sanitize//.sanitize(comment.body);
-    
-    const sanitizedBody = comment.body;
+    const sanitizedBody = DOMPurify.sanitize(comment.body);
+    //const sanitizedBody = comment.body;
+
+    // temporary for debug
     const tweetLink = `https://peakd.com/@${comment.author}/${comment.permlink}`;
 
     return (
