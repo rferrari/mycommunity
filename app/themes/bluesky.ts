@@ -1,4 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
+import { swiperStyles } from './swiperStyles';
 
 export const blueSkyTheme = extendTheme({
     colors: {
@@ -47,6 +48,14 @@ export const blueSkyTheme = extendTheme({
     borders: {
         border: '1px solid #1E90FF',
         borderRadius: '8px',
+    },
+    radii: {
+        none: '0',
+        sm: '4px',
+        base: '8px',
+        md: '12px',
+        lg: '16px',
+        full: '9999px', // For fully rounded corners
     },
     space: {
         px: '1px',

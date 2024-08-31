@@ -1,5 +1,4 @@
-// components/homepage/FooterNavigation.tsx
-import { Box, HStack, Button } from '@chakra-ui/react';
+import { Box, HStack, Button, Link } from '@chakra-ui/react';
 
 export default function FooterNavigation() {
     return (
@@ -16,10 +15,18 @@ export default function FooterNavigation() {
             display={{ base: 'block', md: 'none' }}
         >
             <HStack justify="space-around">
-                <Button variant="ghost">Home</Button>
-                <Button variant="ghost">Explore</Button>
-                <Button variant="ghost">Notifications</Button>
-                <Button variant="ghost">Messages</Button>
+                <Button variant="ghost">
+                    Home
+                </Button>
+                <Button variant="ghost">
+                    Explore
+                </Button>
+                <Button variant="ghost">
+                    Notifications
+                </Button>
+                <Button variant="ghost">
+                    Messages
+                </Button>
             </HStack>
         </Box>
     );

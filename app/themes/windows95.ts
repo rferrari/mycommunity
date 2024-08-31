@@ -1,38 +1,41 @@
 import { extendTheme } from '@chakra-ui/react';
 import { swiperStyles } from './swiperStyles';
-export const nounsDaoTheme = extendTheme({
+
+export const windows95Theme = extendTheme({
+    initialColorMode: 'light',
+    useSystemColorMode: false,
     colors: {
-        background: 'linear-gradient(45deg, #ffcc00, #f7f7f7)',  // Cool gradient background
-        text: '#333333',  // Dark gray text
-        primary: '#333333',
-        secondary: '#ffcc00',  // Nouns yellow
-        accent: '#00ccff',  // Nouns blue
-        muted: '#f7f7f7',  // Muted background
-        border: '#dddddd',  // Light gray border
-        error: '#e53e3e',  // Red for error states
-        success: '#38a169',  // Green for success states
-        warning: '#dd6b20',  // Orange for warnings
+        background: '#C0C0C0', // Light gray background
+        text: '#000000', // Black text
+        primary: '#000080', // Navy blue for primary actions
+        secondary: '#008080', // Teal for secondary elements
+        accent: '#800080', // Purple for accents
+        muted: '#D3D3D3', // Light gray for muted elements
+        border: '#A9A9A9', // Dark gray for borders
+        error: '#FF0000', // Bright red for errors
+        success: '#008000', // Green for success messages
+        warning: '#FFA500', // Orange for warnings
     },
     fonts: {
-        heading: '"Londrina Solid", cursive',
-        body: '"Londrina Solid", cursive',
-        mono: '"Courier New", monospace',
+        heading: '"Tahoma", sans-serif', // Tahoma was commonly used in Windows 95
+        body: '"Tahoma", sans-serif', // Tahoma for body text
+        mono: '"Courier New", monospace', // Monospace for code-like elements
     },
     fontSizes: {
-        xs: '12px',
-        sm: '14px',
-        md: '16px',
-        lg: '18px',
-        xl: '20px',
-        '2xl': '24px',
-        '3xl': '30px',
-        '4xl': '36px',
-        '5xl': '48px',
-        '6xl': '64px',
+        xs: '10px',
+        sm: '12px',
+        md: '14px',
+        lg: '16px',
+        xl: '18px',
+        '2xl': '20px',
+        '3xl': '24px',
+        '4xl': '28px',
+        '5xl': '32px',
+        '6xl': '36px',
     },
     fontWeights: {
         normal: 400,
-        medium: 500,
+        medium: 600,
         bold: 700,
     },
     lineHeights: {
@@ -45,8 +48,16 @@ export const nounsDaoTheme = extendTheme({
         taller: '2',
     },
     borders: {
-        border: '1px solid #ffcc00',  // Nouns yellow border
-        borderRadius: '8px',
+        border: '2px solid #A9A9A9', // Solid dark gray border
+        borderRadius: '0px', // Sharp, rectangular corners typical of Windows 95
+    },
+    radii: {
+        none: '0',
+        sm: '4px',
+        base: '0px',
+        md: '12px',
+        lg: '16px',
+        full: '9999px', // For fully rounded corners
     },
     space: {
         px: '1px',
@@ -94,48 +105,43 @@ export const nounsDaoTheme = extendTheme({
         },
     },
     shadows: {
-        xs: '0 0 2px 0 rgba(0, 0, 0, 0.05)',
-        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        outline: '0 0 0 3px rgba(66, 153, 225, 0.6)',
-        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        xs: '0 0 2px 0 rgba(0, 0, 0, 0.5)',
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.5)',
+        base: '0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3)',
+        '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
+        outline: '0 0 0 3px rgba(0, 0, 0, 0.6)',
+        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.8)',
         none: 'none',
-        'dark-lg': 'rgba(0, 0, 0, 0.4) 0px 10px 15px -3px, rgba(0, 0, 0, 0.3) 0px 4px 6px -2px',
-    },
-    styles: {
-        global: {
-            ...swiperStyles, // Apply Swiper styles globally
-        },
+        'dark-lg': 'rgba(0, 0, 0, 0.5) 0px 10px 15px -3px, rgba(0, 0, 0, 0.3) 0px 4px 6px -2px',
     },
     components: {
         Button: {
             baseStyle: {
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
-                borderRadius: 'base',
+                borderRadius: 'none', // No rounded corners, reflecting the boxy style of Windows 95
             },
             sizes: {
                 sm: {
                     fontSize: 'sm',
                     px: 4,
-                    py: 3,
+                    py: 2,
                 },
                 md: {
                     fontSize: 'md',
                     px: 6,
-                    py: 4,
+                    py: 3,
                 },
             },
             variants: {
                 solid: {
                     bg: 'primary',
-                    color: 'white',
+                    color: 'background',
                     _hover: {
-                        bg: 'secondary',
+                        bg: 'accent',
                     },
                 },
                 outline: {

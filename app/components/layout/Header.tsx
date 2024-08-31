@@ -7,11 +7,7 @@ import { useAioha, AiohaModal } from '@aioha/react-ui'
 import { KeyTypes } from '@aioha/aioha'
 import '@aioha/react-ui/dist/build.css'
 
-interface HeaderProps {
-    onLoginClick?: () => void;
-}
-
-export default function Header({ onLoginClick }: HeaderProps) {
+export default function Header() {
     const { colorMode } = useColorMode()
     const [modalDisplayed, setModalDisplayed] = useState(false)
     const { user } = useAioha()
@@ -31,21 +27,21 @@ export default function Header({ onLoginClick }: HeaderProps) {
                     _placeholder={{ color: 'text' }}
                     display={{ base: 'none', md: 'block' }}
                 />
-                    <Button onClick={() => setModalDisplayed(true)}>
-                        {user ?? 'Login'}
-                    </Button>
-                    <div className={colorMode}>
-                        <AiohaModal
-                        displayed={modalDisplayed}
-                        loginOptions={{
-                            msg: 'Login',
-                            keyType: KeyTypes.Posting
-                        }}
-                        onLogin={console.log}
-                        onClose={setModalDisplayed}
-                        />
-                    </div>
+                <Button onClick={() => setModalDisplayed(true)}>
+                    {user ?? 'Login'}
+                </Button>
             </Flex>
+            <div className={colorMode}>
+                <AiohaModal
+                    displayed={modalDisplayed}
+                    loginOptions={{
+                        msg: 'Login',
+                        keyType: KeyTypes.Posting
+                    }}
+                    onLogin={console.log}
+                    onClose={setModalDisplayed}
+                />
+            </div>
         </Box>
     );
 }

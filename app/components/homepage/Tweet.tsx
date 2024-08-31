@@ -1,39 +1,91 @@
-import { Box, Text, HStack, Button, Avatar, Link } from '@chakra-ui/react';
+import { Box, Text, HStack, Button, Avatar, Link, VStack } from '@chakra-ui/react';
 import { Comment } from '@hiveio/dhive';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import DOMPurify from 'dompurify';
-import { useComments } from '@/hooks/useComments';
-import { FaHeart, FaRegComment, FaRegHeart, FaShare } from "react-icons/fa";
+import { MarkdownRenderer } from '../MarkdownRenderer';
+import { ExtendedComment } from '@/hooks/useComments';
+import { FaRegComment, FaRegHeart, FaShare, FaHeart } from "react-icons/fa";
+import { useAioha } from '@aioha/react-ui';
+import useHiveAccount from '@/hooks/useHiveAccount';
+import { useState } from 'react';
 
-const Tweet = ({ comment }: { comment: Comment }) => {
-    // Sanitize the comment body to remove any invalid HTML tags or attributes
-    const sanitizedBody = DOMPurify.sanitize(comment.body);
-    console.log(comment);
-    const replies = useComments(comment.author, comment.permlink);
-    console.log(replies.comments.length);
+interface TweetProps {
+    comment: ExtendedComment;
+    onOpen: () => void;
+    setReply: (comment: Comment) => void;
+    setConversation?: (conversation: Comment) => void;
+    level?: number; // Added level for indentation
+}
+
+const Tweet = ({ comment, onOpen, setReply, setConversation, level = 0 }: TweetProps) => {
+    const { aioha, user } = useAioha();
+    const userAccount = useHiveAccount(comment.author)
+    const [voted, setVoted] = useState(comment.active_votes?.some(item => item.voter === user))
+
+    const replies = comment.replies;
+
+    function handleReplyModal() {
+        setReply(comment);
+        onOpen();
+    }
+
+    function handleConversation() {
+        if (setConversation) setConversation(comment);
+    }
+
+    async function handleVote() {
+        const vote = await aioha.vote(comment.author, comment.permlink, 500);
+        setVoted(vote.success)
+    }
+
     return (
-        <Box bg="muted" p={4} mt={1} mb={1} borderRadius="md">
-            <HStack mb={2}>
-                <Avatar size="sm" name={comment.author} />
-                <Link href={`/profile/${comment.author}`} fontWeight="bold" mb={2}>
-                    {comment.author}
-                </Link>
-            </HStack>
-            <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw]}
+        <Box pl={level > 0 ? 4 : 0} ml={level > 0 ? 8 : 0}>
+            <Box
+                bg="muted"
+                p={4}
+                mt={1}
+                mb={1}
+                border="1px solid"
+                borderColor="border"
+                borderRadius="base"  // This will apply the borderRadius from your theme
             >
-                {sanitizedBody}
-            </ReactMarkdown>
-            <HStack justify="space-between" mt={3}>
-                <Button leftIcon={<FaRegHeart />} variant="ghost">{comment.net_votes}</Button>
-                <Button leftIcon={<FaRegComment />} variant="ghost">{replies.comments.length}</Button>
-                <Button leftIcon={<FaShare />} variant="ghost"></Button>
-            </HStack>
+                <HStack mb={2}>
+                    <Avatar size="sm" name={comment.author} src={userAccount.hiveAccount?.metadata?.profile.profile_image} />
+                    <Link href={`/profile/${comment.author}`} fontWeight="bold" mb={2}>
+                        {comment.author}
+                    </Link>
+                </HStack>
+                <MarkdownRenderer>{comment.body}</MarkdownRenderer>
+                <HStack justify="space-between" mt={3}>
+                    <Button leftIcon={voted ? (<FaHeart />) : (<FaRegHeart />)} variant="ghost" onClick={handleVote}>
+                        {comment.active_votes?.length}
+                    </Button>
+                    <HStack>
+                        <FaRegComment onClick={handleReplyModal} cursor="pointer" />
+                        {setConversation && (
+                            <Text onClick={handleConversation} cursor="pointer" fontWeight="bold">
+                                {comment.children}
+                            </Text>
+                        )}
+                    </HStack>
+                    <Button leftIcon={<FaShare />} variant="ghost"></Button>
+                </HStack>
+            </Box>
+            {/* Render replies recursively */}
+            {replies && replies.length > 0 && (
+                <VStack spacing={2} align="stretch" mt={2}>
+                    {replies.map((reply: Comment) => (
+                        <Tweet
+                            key={reply.permlink}
+                            comment={reply}
+                            onOpen={onOpen}
+                            setReply={setReply}
+                            setConversation={setConversation}
+                            level={level + 1} // Increment level for indentation
+                        />
+                    ))}
+                </VStack>
+            )}
         </Box>
     );
-}
+};
 
 export default Tweet;
