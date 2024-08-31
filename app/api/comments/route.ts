@@ -42,7 +42,6 @@ const fetchCommentsFromHive = async (startAuthor: string | null, startPermlink: 
 const startFetchingNewCommentsInterval = (): any => {
     if (newCommentsSetup) return; //does we need this? looks like no....
 
-    
     setInterval(async () => {
         newCommentsSetup = true;
         if (!fetchingInProgress) 
