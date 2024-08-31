@@ -2,24 +2,9 @@
 
 
 'use client'
-<<<<<<< HEAD
-import HiveClient from "@/lib/hive/hiveclient";
-import { useCallback, useEffect, useState } from "react";
-import { Comment } from "@hiveio/dhive";
-
-// Initialize parameters for fetching comments
-const paramsFetchTweetsByRoot = {
-    start: ['', '', '', ''],
-    limit: 500,
-    order: "by_root",
-};
-
-var paramsFetchTweets = paramsFetchTweetsByRoot;
-=======
 import HiveClient from "@/lib/hive/hiveclient"
 import { useCallback, useEffect, useState } from "react"
 import { Comment, DisqussionQuery } from "@hiveio/dhive"
->>>>>>> main
 
 <<<<<<< HEAD
 let allLoadedComments: Comment[] = [];
@@ -46,25 +31,16 @@ export interface ExtendedComment extends Comment {
     active_votes?: ActiveVote[]
     replies?: ExtendedComment[]
 }
->>>>>>> upstream/main
 
-const arraysAreEqual = (arr1: any[], arr2: any[]): boolean => {
-    return JSON.stringify(arr1) === JSON.stringify(arr2);
-};
+interface ActiveVote {
+    percent: number
+    reputation: number
+    rshares: number
+    time: string
+    voter: string
+    weight: number
+}
 
-<<<<<<< HEAD
-const loadComments = async (): Promise<Comment[]> => {
-    const paramsArray = {
-        start: [
-            'xvlad',
-            'nxvsjarvmp',
-            lastChildAuthor,
-            lastChildPermLink,
-        ],
-        limit: 500,
-        order: "by_root",
-    };
-=======
 async function fetchComments(
     author: string,
     permlink: string,
@@ -76,44 +52,20 @@ async function fetchComments(
             author,
             permlink,
         ])) as Comment[];
->>>>>>> upstream/main
 
-    if (!arraysAreEqual(lastStartParameter, paramsArray.start)) {
-        lastStartParameter = [...paramsArray.start]; // Salva o novo estado de 'start'
-        
-        const commentsResponse = await HiveClient.call(
-            "database_api", 
-            "list_comments", 
-            paramsArray
-        ) as { comments: Comment[] };
-
-        return commentsResponse.comments;
-    }
-
-    return []; // Retorna vazio se a solicitação já foi feita
-};
-
-const fetchAllComments = async (): Promise<void> => {
-    let hasMoreComments = true;
-
-    do {
-        const comments = await loadComments(); // Espera a resposta antes de continuar
-
-        if (comments.length > 0) {
-            // Remove o último comentário carregado anteriormente, se houver
-            if (allLoadedComments.length > 0) {
-                allLoadedComments.pop();
-            }
-            allLoadedComments = allLoadedComments.concat(comments);
-
-            const lastComment = comments[comments.length - 1];
-            lastChildAuthor = lastComment.author;
-            lastChildPermLink = lastComment.permlink;
-
-            console.log("Carregando Comentarios... ", allLoadedComments.length);
+        if (recursive) {
+            const fetchReplies = async (comment: ExtendedComment): Promise<ExtendedComment> => {
+                if (comment.children && comment.children > 0) {
+                    comment.replies = await fetchComments(comment.author, comment.permlink, true);
+                }
+                return comment;
+            };
+            const commentsWithReplies = await Promise.all(comments.map(fetchReplies));
+            return commentsWithReplies;
         } else {
             hasMoreComments = false; // Para o loop se não houver mais comentários
 >>>>>>> main
+            return comments;
         }
         return new Date(b.created).getTime() - new Date(a.created).getTime();
     });
@@ -182,19 +134,26 @@ async function fetchComments(page: number, pageSize: number): Promise<Comment[]>
     const endIndex = startIndex + pageSize;
 
     return allLoadedComments.slice(startIndex, endIndex);
+    } catch (error) {
+        console.error("Failed to fetch comments:", error);
+        return [];
+    }
 }
 
-export function useComments(author: string, permlink: string) {
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState(1);
-    const pageSize = 15;
+export function useComments(
+    author: string,
+    permlink: string,
+    recursive: boolean = false
+) {
+    const [comments, setComments] = useState<Comment[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     const fetchAndSetComments = async (page: number): Promise<Comment[]> => {
         try {
-            const fetchedComments = await fetchComments(page, pageSize);
-            return fetchedComments;
+            const fetchedComments = await fetchComments(author, permlink, recursive);
+            setComments(fetchedComments);
+            setIsLoading(false);
         } catch (err: any) {
             setError(err.message ? err.message : "Error loading comments");
             console.error(err);
@@ -221,17 +180,27 @@ export function useComments(author: string, permlink: string) {
             const newComments = await handleLoadMore();
             setComments(prevComments => [...prevComments, ...newComments]);
             setIsLoading(false);
-        };
+        }
+    }, [author, permlink, recursive]);
 
-        loadComments();
-    }, [page]);
+    useEffect(() => {
+        fetchAndUpdateComments();
+    }, [fetchAndUpdateComments]);
+
+    const addComment = useCallback((newComment: Comment) => {
+        setComments((existingComments) => [...existingComments, newComment]);
+    }, []);
+
+    const updateComments = useCallback(async () => {
+        await fetchAndUpdateComments();
+    }, [fetchAndUpdateComments]);
 
     return {
         comments,
         isLoading,
-        error,
-        handleLoadMore,
+        addComment,
+        updateComments,
     };
 }
-
-*/
+    */
+   
