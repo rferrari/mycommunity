@@ -33,7 +33,6 @@ import HiveClient from "@/lib/hive/hiveclient"
 import { useCallback, useEffect, useState } from "react"
 import { Comment, DisqussionQuery } from "@hiveio/dhive"
 
-<<<<<<< HEAD
 let allLoadedComments: Comment[] = [];
 let lastChildAuthor = '';
 let lastChildPermLink = '';
