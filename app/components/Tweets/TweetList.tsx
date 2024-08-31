@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Box, VStack, Text } from "@chakra-ui/react";
 import { Comment } from "@hiveio/dhive";
 
-//import TweetComposer from "./TweetComposer";
+import TweetComposer from "./TweetComposer";
 import Tweet from "./TweetSingle";
 
 interface TweetListProps {
@@ -15,11 +15,26 @@ const thread_author = process.env.NEXT_PUBLIC_THREAD_AUTHOR || 'skatedev';
 const thread_permlink = process.env.NEXT_PUBLIC_THREAD_PERMLINK || 're-skatedev-sidr6t';
 
 export default function TweetList({ initialComments }: TweetListProps) {
+  // live load, infinite scrool
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [batch, setBatch] = useState(1);
   const [hasNewComments, setHasNewComments] = useState(false);
   const [firstPermlink, setFirstPermlink] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // new conversation modal
+  /*
+  const [conversation, setConversation] = useState<Comment | undefined>();
+  const [reply, setReply] = useState<Comment>();
+  const [isOpen, setIsOpen] = useState(false);
+  const [newComment, setNewComment] = useState<Comment | null>(null); // Define the state
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
+  const handleNewComment = (newComment: Partial<Comment> | CharacterData) => {
+    setNewComment(newComment as Comment); // Type assertion
+  };
+  */
+
 
   // Set firstPermlink when initial comments are available
   useEffect(() => {
@@ -30,18 +45,26 @@ export default function TweetList({ initialComments }: TweetListProps) {
 
   // Load more comments when scroll down
   const loadMoreComments = async () => {
+    //if(loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`/api/comments?batch=${batch}`);
-      const data = await response.json();
-      const newComments: Comment[] = data.comments;
+      // bug here load same more than once async duplicating tweets
+      //if(!loading) { again caused by the vh with differences, 0.66
+      // vh must be ZERO at the EOF
+        setBatch(batch + 1);
 
-      setComments(prevComments => [...prevComments, ...newComments]);
-      setBatch(batch + 1);
+        const response = await fetch(`/api/comments?batch=${batch}`);
+        const data = await response.json();
+        const newComments: Comment[] = data.comments;
+
+        setComments(prevComments => [...prevComments, ...newComments]);
+        setLoading(false);
+        //}
     } catch (error) {
       console.error("Failed to load more comments", error);
+      setLoading(false);
+    } finally {
     }
-    setLoading(false);
   };
 
   // Polling for new comments
@@ -53,7 +76,8 @@ export default function TweetList({ initialComments }: TweetListProps) {
         setHasNewComments(true);
         //handleLoadNewComments();
       }
-    }, Number(process.env.NEXT_PUBLIC_FETCH_NEW_COMMENTS_INTERVAL) || 60000); // Poll new messages every minute
+    }, 180000);
+    //}, Number(process.env.NEXT_PUBLIC_FETCH_NEW_COMMENTS_INTERVAL) || 60000); // Poll new messages every minute
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, [firstPermlink]);
@@ -75,9 +99,16 @@ export default function TweetList({ initialComments }: TweetListProps) {
   // infinite scroll, handle load more comments end of page
   useEffect(() => {
     const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop ===
-        document.documentElement.offsetHeight
+      console.log(window.innerHeight + document.documentElement.scrollTop
+                           - document.documentElement.offsetHeight);
+      // bug detected. the scroll is with a 0.33 diff.
+      // can be related to vh 
+      //if (
+//        window.innerHeight + document.documentElement.scrollTop ===
+  //      document.documentElement.offsetHeight
+      if(
+        document.documentElement.offsetHeight - 
+        (window.innerHeight + document.documentElement.scrollTop) <= 1000
       ) {
         loadMoreComments();
       }
@@ -92,10 +123,12 @@ export default function TweetList({ initialComments }: TweetListProps) {
       {/* <TweetComposer pa={thread_author} pp={thread_permlink} /> */}
 
       <Text align="right">Sort comments by <b>latest</b></Text>
+      <Text align="right">Sort comments by <b>oldest</b></Text>
+      <Text align="right">Sort comments by <b>$$$$$$</b></Text>
 
       {hasNewComments && (
         <div onClick={handleLoadNewComments} style={{ cursor: 'pointer', color: 'blue' }}>
-          <Text>New comments available! Click to check it out</Text>
+          <Text>New comments available! Click to check it out...</Text>
         </div>
       )}
 
@@ -107,6 +140,10 @@ export default function TweetList({ initialComments }: TweetListProps) {
 
       {loading && 
       <Text>Loading more comments...</Text>}
+
+      {/* {isOpen && 
+      <TweetReplyModal isOpen={isOpen} onClose={onClose} comment={reply} onNewReply={handleNewComment} />} */}
+
     </Box>
   );
 

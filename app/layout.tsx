@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Providers>
-          <Box bg="background" color="text" minH="100vh">
+          {/* <Box bg="background" color="text" minH="100vh"> */}
             <Header />
             <Flex direction={{ base: 'column', md: 'row' }}>
               <Sidebar />
@@ -23,8 +23,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {children}
               </Box>
             </Flex>
-            <FooterNavigation />
-          </Box>
+            {/* <FooterNavigation /> */}
+          {/* </Box> */}
         </Providers>
       </body>
     </html>

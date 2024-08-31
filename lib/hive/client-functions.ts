@@ -1,3 +1,4 @@
+/*
 'use client';
 import { Broadcast, Custom, KeychainKeyTypes, KeychainRequestResponse, KeychainSDK, Login, Post, Transfer, Vote, WitnessVote } from "keychain-sdk";
 import HiveClient from "./hiveclient";
@@ -315,3 +316,4 @@ export async function uploadImage(file: File, signature: string, index: number, 
             xhr.send(formData);
         });
 }
+        */

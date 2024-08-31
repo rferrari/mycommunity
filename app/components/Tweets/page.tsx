@@ -11,8 +11,11 @@ async function fetchInitialComments(): Promise<Comment[]> {
   return data.comments;
 }
 
+
+
 export default async function TweetPage() {
   const initialComments = await fetchInitialComments();
   return <TweetList initialComments={initialComments} />
 }
 
+    

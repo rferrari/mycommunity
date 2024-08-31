@@ -6,7 +6,8 @@ import { organizeCommentsByLatest } from '@/lib/organizeComments';
 const publicThreadAuthor = process.env.NEXT_PUBLIC_THREAD_AUTHOR || 'skatedev';
 const publicThreadPermLink = process.env.NEXT_PUBLIC_THREAD_PERMLINK || 'test-post-for-new-community';
 
-const fetchNewCommentsIntervalTime = Number(process.env.NEXT_PUBLIC_FETCH_NEW_COMMENTS_INTERVAL) || 60000;
+const fetchNewCommentsIntervalTime = 180000;// Number(process.env.NEXT_PUBLIC_FETCH_NEW_COMMENTS_INTERVAL) || 60000;
+console.log(fetchNewCommentsIntervalTime);
 
 let cachedComments: Comment[] = [];
 let fetchingInProgress = false;

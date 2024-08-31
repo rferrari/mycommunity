@@ -12,33 +12,42 @@ import DOMPurify from 'dompurify';
 import { FaHeart, FaMoneyBill, FaRegComment, FaRegHeart, FaShare } from "react-icons/fa";
 
 const Tweet = ({ comment }: { comment: Comment }) => {
+
+    const baseFontSize = 14;
+    const scale = 0.3; // Adjust this to control the rate of decrease
+    const minFontSize = 8; // Minimum font size
+
     // Sanitize the comment body to remove any invalid HTML tags or attributes
-    const sanitizedBody = DOMPurify.sanitize(comment.body);
+    const sanitizedBody = DOMPurify.sanitize(String(comment.body));
     //const sanitizedBody = comment.body;
 
     // temporary for debug
     const tweetLink = `https://peakd.com/@${comment.author}/${comment.permlink}`;
 
+    const fontSize = Math.max(minFontSize, baseFontSize / Math.pow(comment.depth, scale));
+
     return (
-        <Box bg="muted" p={4} mt={1} mb={1} borderRadius="md" marginLeft={comment.depth*33}>
+        <Box bg="muted" p={4} mt={1} mb={1} borderRadius="md" 
+        marginLeft={(comment.depth-1)*33}>
             <HStack mb={2}>
                 <Avatar size="sm" name={comment.author} />
-                <Text>{comment.title}</Text>
-                <Link href={`/profile/${comment.author}`} fontWeight="bold" mb={2}>
-                    {comment.author}
+                <Link href={`/@${comment.author}`} 
+                    fontWeight="bold" mb={2} fontSize={(fontSize)} >
+                        {comment.author}
                 </Link>
-                <Text fontSize={'14px'}>{comment.created}</Text>
-                <Link fontSize={'12px'}
-                    href={tweetLink}
-                    target='_blank'
-                    >🔗</Link>
+                <Text float={'right'} fontSize={(fontSize)}>{comment.created}</Text>
+                <Link float={'right'} fontSize={(fontSize)}href={tweetLink} target='_blank'>🔗{comment.permlink}</Link>
             </HStack>
+
+            <Text fontSize={(fontSize)}>{comment.title}</Text>
+            {/* <Text fontSize={(fontSize)}> */}
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeRaw]}
             >
                 {sanitizedBody}
             </ReactMarkdown>
+            {/* </Text> */}
             <HStack justify="space-between" mt={3}>
                 {/* <Button leftIcon={<FaHeart />} variant="ghost">{comment.net_votes}</Button> */}
                 <Button leftIcon={<FaRegHeart />} variant="ghost">{comment.net_votes}</Button>
