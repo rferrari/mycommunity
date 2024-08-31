@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Box, VStack, Text } from "@chakra-ui/react";
-import Tweet from "./Tweet";
 import { Comment } from "@hiveio/dhive";
+
+import Tweet from "./TweetSingle";
 
 interface TweetListProps {
   initialComments: Comment[];
@@ -76,6 +77,7 @@ const handleLoadNewComments = async () => {
 
   return (
     <Box>
+      {/* <TweetComposer /> */}
       <Text align="right">Sort comments by <b>latest</b></Text>
 
       {hasNewComments && (
@@ -86,10 +88,13 @@ const handleLoadNewComments = async () => {
 
       <VStack spacing={4} align="stretch">
         {comments.map(comment => (
-          <Tweet key={comment.permlink} comment={comment} />
+        <Tweet key={comment.permlink} comment={comment} />
         ))}
       </VStack>
-      {loading && <Text>Loading more comments...</Text>}
+
+      {loading && 
+      <Text>Loading more comments...</Text>}
     </Box>
   );
+
 }

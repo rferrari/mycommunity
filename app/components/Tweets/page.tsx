@@ -1,5 +1,7 @@
-import TweetList from "./TweetList";
 import { Comment } from "@hiveio/dhive";
+
+import TweetComposer from "./TweetComposer";
+import TweetList from "./TweetList";
 
 async function fetchInitialComments(): Promise<Comment[]> {
   const response = await fetch(`http://localhost:3000/api/comments?batch=0`, {
@@ -13,6 +15,11 @@ async function fetchInitialComments(): Promise<Comment[]> {
 
 export default async function TweetPage() {
   const initialComments = await fetchInitialComments();
-  return <TweetList initialComments={initialComments} />
+  return (
+    <>
+      <TweetComposer />
+      <TweetList initialComments={initialComments} />
+    </>
+  )
 }
 
