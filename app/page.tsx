@@ -35,7 +35,7 @@ export default function Home() {
             <TweetPage/>
           </Container>
         </Box>
-        {/* <RightSidebar /> */}
+        <RightSidebar />
       </Flex>
       {/* {isOpen && 
       <TweetReplyModal isOpen={isOpen} onClose={onClose} comment={reply} onNewReply={handleNewComment} />} */}
