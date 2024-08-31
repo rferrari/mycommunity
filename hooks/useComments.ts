@@ -2,6 +2,7 @@
 
 
 'use client'
+<<<<<<< HEAD
 import HiveClient from "@/lib/hive/hiveclient";
 import { useCallback, useEffect, useState } from "react";
 import { Comment } from "@hiveio/dhive";
@@ -14,15 +15,105 @@ const paramsFetchTweetsByRoot = {
 };
 
 var paramsFetchTweets = paramsFetchTweetsByRoot;
+=======
+import HiveClient from "@/lib/hive/hiveclient"
+import { useCallback, useEffect, useState } from "react"
+import { Comment, DisqussionQuery } from "@hiveio/dhive"
+>>>>>>> main
 
+<<<<<<< HEAD
 let allLoadedComments: Comment[] = [];
 let lastChildAuthor = '';
 let lastChildPermLink = '';
+<<<<<<< HEAD
 
 function organizeComments(comments: Comment[]): Comment[] {
     comments.sort((a, b) => {
         if (a.depth !== b.depth) {
             return a.depth - b.depth;
+=======
+let lastStartParameter: any[] = [];
+=======
+interface ActiveVote {
+    percent: number;
+    reputation: number;
+    rshares: number;
+    time: string;
+    voter: string;
+    weight: number;
+}
+export interface ExtendedComment extends Comment {
+    active_votes?: ActiveVote[]
+    replies?: ExtendedComment[]
+}
+>>>>>>> upstream/main
+
+const arraysAreEqual = (arr1: any[], arr2: any[]): boolean => {
+    return JSON.stringify(arr1) === JSON.stringify(arr2);
+};
+
+<<<<<<< HEAD
+const loadComments = async (): Promise<Comment[]> => {
+    const paramsArray = {
+        start: [
+            'xvlad',
+            'nxvsjarvmp',
+            lastChildAuthor,
+            lastChildPermLink,
+        ],
+        limit: 500,
+        order: "by_root",
+    };
+=======
+async function fetchComments(
+    author: string,
+    permlink: string,
+    recursive: boolean = false
+): Promise<Comment[]> {
+    try {
+
+        const comments = (await HiveClient.database.call("get_content_replies", [
+            author,
+            permlink,
+        ])) as Comment[];
+>>>>>>> upstream/main
+
+    if (!arraysAreEqual(lastStartParameter, paramsArray.start)) {
+        lastStartParameter = [...paramsArray.start]; // Salva o novo estado de 'start'
+        
+        const commentsResponse = await HiveClient.call(
+            "database_api", 
+            "list_comments", 
+            paramsArray
+        ) as { comments: Comment[] };
+
+        return commentsResponse.comments;
+    }
+
+    return []; // Retorna vazio se a solicitação já foi feita
+};
+
+const fetchAllComments = async (): Promise<void> => {
+    let hasMoreComments = true;
+
+    do {
+        const comments = await loadComments(); // Espera a resposta antes de continuar
+
+        if (comments.length > 0) {
+            // Remove o último comentário carregado anteriormente, se houver
+            if (allLoadedComments.length > 0) {
+                allLoadedComments.pop();
+            }
+            allLoadedComments = allLoadedComments.concat(comments);
+
+            const lastComment = comments[comments.length - 1];
+            lastChildAuthor = lastComment.author;
+            lastChildPermLink = lastComment.permlink;
+
+            console.log("Carregando Comentarios... ", allLoadedComments.length);
+        } else {
+            hasMoreComments = false; // Para o loop se não houver mais comentários
+>>>>>>> main
         }
         return new Date(b.created).getTime() - new Date(a.created).getTime();
     });
