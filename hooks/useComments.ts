@@ -37,26 +37,11 @@ let allLoadedComments: Comment[] = [];
 let lastChildAuthor = '';
 let lastChildPermLink = '';
 let lastStartParameter: any[] = [];
-=======
-interface ActiveVote {
-    percent: number;
-    reputation: number;
-    rshares: number;
-    time: string;
-    voter: string;
-    weight: number;
-}
-export interface ExtendedComment extends Comment {
-    active_votes?: ActiveVote[]
-    replies?: ExtendedComment[]
-}
->>>>>>> upstream/main
 
 const arraysAreEqual = (arr1: any[], arr2: any[]): boolean => {
     return JSON.stringify(arr1) === JSON.stringify(arr2);
 };
 
-<<<<<<< HEAD
 const loadComments = async (): Promise<Comment[]> => {
     const paramsArray = {
         start: [
@@ -68,19 +53,6 @@ const loadComments = async (): Promise<Comment[]> => {
         limit: 500,
         order: "by_root",
     };
-=======
-async function fetchComments(
-    author: string,
-    permlink: string,
-    recursive: boolean = false
-): Promise<Comment[]> {
-    try {
-
-        const comments = (await HiveClient.database.call("get_content_replies", [
-            author,
-            permlink,
-        ])) as Comment[];
->>>>>>> upstream/main
 
     if (!arraysAreEqual(lastStartParameter, paramsArray.start)) {
         lastStartParameter = [...paramsArray.start]; // Salva o novo estado de 'start'
